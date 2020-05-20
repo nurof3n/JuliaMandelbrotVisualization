@@ -8,7 +8,6 @@
 
 Graphics& Game::gfx = Graphics::GetInstance();
 
-// singleton
 Game& Game::GetInstance() noexcept {
 	static Game _instance;
 	return _instance;
@@ -23,8 +22,14 @@ void Game::Setup() {
 	// load text font
 	if( !textFont.loadFromFile( "Content/cour.ttf" ) )
 		throw EXCEPT( "Cannot load file: Content/cour.ttf" );
-	text.setFont( textFont );
-	text.setFillColor( { 222, 168, 47 } );
+	textFPS.setFont( textFont );
+	textTAB.setFont( textFont );
+	textFPS.setFillColor( { 222, 168, 47 } );
+	textTAB.setFillColor( { 222, 168, 47 } );
+	textTAB.setPosition( { 0.0f, 24.0f } );
+	textFPS.setCharacterSize( 20 );
+	textTAB.setCharacterSize( 20 );
+	textTAB.setString( "Press F to toggle FPS\nPress TAB to cycle through color schemes\nPress ESCAPE to exit\nPress H to hide controls" );
 	// setup window
 	canvas.CreateCanvas();
 	gfx.Setup();
@@ -37,6 +42,7 @@ void Game::Setup() {
 	// initialize member variables
 	hasFocus = true;
 	showFPS = false;
+	showControls = true;
 	colorScheme = 0;	// default color scheme
 }
 // updates game logic
@@ -69,9 +75,12 @@ void Game::UpdateModel() {
 					}
 				// switch color scheme
 					else
-						if( event.key.code == sf::Keyboard::Tab ) {
+						if( event.key.code == sf::Keyboard::Tab )
 							colorScheme = (colorScheme + 1) % 4;
-						}
+				// toggle controls
+						else
+							if( event.key.code == sf::Keyboard::H )
+								showControls = showControls ? false : true;
 				break;
 		}
 	// step out if out of focus
@@ -89,7 +98,10 @@ void Game::ComposeFrame() {
 	gfx.Draw( canvas.GetSprite(), &fractalShader );
 	// show FPS
 	if( showFPS )
-		gfx.Draw( text );
+		gfx.Draw( textFPS );
+	// show controls
+	if( showControls )
+		gfx.Draw( textTAB );
 }
 // main game loop
 void Game::Go() {
@@ -110,7 +122,7 @@ void Game::Go() {
 		updateTime += frameTime;
 		if( updateTime > 0.25 ) {
 			updateTime -= 0.25;
-			text.setString( "FPS: " + std::to_string( int( 1.0 / frameTime ) ) );
+			textFPS.setString( "FPS: " + std::to_string( int( 1.0 / frameTime ) ) );
 		}
 	}
 }

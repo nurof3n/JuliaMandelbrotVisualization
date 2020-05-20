@@ -10,7 +10,6 @@ private:
 public:
 	// singleton
 	static Graphics& GetInstance() noexcept;
-
 	~Graphics() noexcept = default;
 	Graphics( const Graphics& ) = delete;
 	const Graphics& operator=( const Graphics& ) = delete;

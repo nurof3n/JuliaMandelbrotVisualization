@@ -7,6 +7,7 @@ class Game {
 private:
 	Game() = default;
 public:
+	// singleton
 	static Game& GetInstance() noexcept;
 	Game( const Game& ) = delete;
 	const Game& operator=( const Game& ) = delete;
@@ -22,10 +23,11 @@ private:
 	sf::Shader fractalShader;
 	bool hasFocus;
 	bool showFPS;
+	bool showControls;
 	FrameTimer frameTimer;
 	float updateTime;
 	sf::Font textFont;
-	sf::Text text;
+	sf::Text textFPS, textTAB;
 	int colorScheme;	// varies from 0 to 3
 };
 

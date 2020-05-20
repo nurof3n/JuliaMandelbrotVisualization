@@ -6,7 +6,7 @@ uniform bool IsLMBPressed;
 uniform int colorScheme;
 
 // colors used to blend on one color scheme
-const vec3 colorMix1 = vec3(0.3, 0.3, 0.7);
+const vec3 colorMix1 = vec3(0.2824, 0.2824, 0.9686);
 const vec3 colorMix2 = vec3(0.0, 0.0, 0.0);
 
 // hue-saturation-value to rgb conversion
