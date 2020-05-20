@@ -1,9 +1,11 @@
 precision highp float;
 
 uniform vec2 Resolution;
-uniform vec2 MousePos;
+uniform vec2 RedDotPos;
 uniform bool IsLMBPressed;
-uniform int colorScheme;
+uniform bool IsExample;
+uniform bool UBER;
+uniform int ColorScheme;
 
 // colors used to blend on one color scheme
 const vec3 colorMix1 = vec3(0.2824, 0.2824, 0.9686);
@@ -20,17 +22,21 @@ void main()
 {
     // normalize coordinates, such that y axis goes from -1 to 1, (0, 0) is the center of the screen, keep aspect ratio
     vec2 uv = (gl_FragCoord.xy - Resolution * 0.5) / Resolution.y;
-    vec2 redDot = (MousePos - Resolution * 0.5) / Resolution.y;
-    // invert the mouse y coordinates
-    redDot.y = -redDot.y;
+    vec2 redDot;
     
     // set and apply zoom
-    vec2 zoompoint = vec2(0.0);
     float zoom = 0.4;
     uv /= zoom;
-    redDot /= zoom;
-    uv += zoompoint;
-    redDot += zoompoint;
+    
+    // update redDot as mouse position or as example position
+    if (!IsExample) {
+        redDot = (RedDotPos - Resolution * 0.5) / Resolution.y;
+        // invert the mouse y coordinates
+        redDot.y = -redDot.y;
+        redDot /= zoom;
+    }
+    else
+    redDot = RedDotPos;
     
     // Julia Set
     vec2 juliaParam = redDot;
@@ -40,9 +46,13 @@ void main()
     float rz = 0.0;
     float rdz = 0.0;
     int nri = 0;
-    
+    int juliaIter = 500;
+
+    if(UBER)
+        juliaIter = 2000;
+
     // Julia Set iteration
-    for(int i = 0; i < 500; i ++ )
+    for(int i = 0; i < juliaIter; i ++ )
     {
         if (rz > 1024.0)
         break;
@@ -68,13 +78,13 @@ void main()
         // normalized iteration count: https://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
         float nic = float(nri) + 1.0 - log2(log2(rz));
         
-        if (colorScheme == 1)
+        if (ColorScheme == 1)
         // multicolored
         color = hsv2rgb(nic * 0.015) + vec3(0.0, 0.0, 0.4);
-        else if (colorScheme == 2)
+        else if (ColorScheme == 2)
         // (discrete) escape time coloring: Base the color on the number of iterations
         color = mix(colorMix1, colorMix2, fract(float(nri) * 0.02));
-        else if (colorScheme == 3)
+        else if (ColorScheme == 3)
         // greyscale
         color = vec3(distJulia);
         else
@@ -103,7 +113,7 @@ void main()
         vec3 incolor;
         if (rz < 4.0)
         incolor = vec3(0.3, 1.0, 0.3); // is in
-        else if (colorScheme == 1)// adjust red color for the multicolored one
+        else if (ColorScheme == 1)// adjust red color for the multicolored one
         incolor = vec3(0.4, 0.0667, 0.0039); // is out
         else
         incolor = vec3(0.9059, 0.1843, 0.0588); // is out
@@ -114,7 +124,7 @@ void main()
         c = uv;
         for(int i = 0; i < 100; i ++ )
         {
-            if (rz > 256.0)
+            if (rz > 64.0)
             break;
             
             // Z' -> 2*Z*Z' + 1

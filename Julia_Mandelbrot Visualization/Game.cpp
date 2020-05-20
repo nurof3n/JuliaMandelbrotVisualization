@@ -29,7 +29,7 @@ void Game::Setup() {
 	textTAB.setPosition( { 0.0f, 24.0f } );
 	textFPS.setCharacterSize( 20 );
 	textTAB.setCharacterSize( 20 );
-	textTAB.setString( "Press F to toggle FPS\nPress TAB to cycle through color schemes\nPress ESCAPE to exit\nPress H to hide controls" );
+	textTAB.setString( "Press F to toggle FPS\nPress TAB to cycle through color schemes\nPress 0-9 number keys to go through example sets\nPress U to toggle UBER mode\nPress ESCAPE to exit\nPress H to hide controls" );
 	// setup window
 	canvas.CreateCanvas();
 	gfx.Setup();
@@ -38,11 +38,14 @@ void Game::Setup() {
 	std::mt19937 rng( dev() );
 	std::uniform_int_distribution<std::mt19937::result_type> randHeight( 0, gfx.GetWindow().getSize().y - 1 );
 	std::uniform_int_distribution<std::mt19937::result_type> randWidth( 0, gfx.GetWindow().getSize().x - 1 );
-	fractalShader.setUniform( "MousePos", sf::Vector2f( randWidth( rng ), randHeight( rng ) ) );
+	fractalShader.setUniform( "RedDotPos", sf::Vector2f( randWidth( rng ), randHeight( rng ) ) );
+	fractalShader.setUniform( "IsExample", false );
+	fractalShader.setUniform( "ColorScheme", 0 );
 	// initialize member variables
 	hasFocus = true;
 	showFPS = false;
 	showControls = true;
+	uberMode = false;
 	colorScheme = 0;	// default color scheme
 }
 // updates game logic
@@ -75,25 +78,42 @@ void Game::UpdateModel() {
 					}
 				// switch color scheme
 					else
-						if( event.key.code == sf::Keyboard::Tab )
+						if( event.key.code == sf::Keyboard::Tab ) {
 							colorScheme = (colorScheme + 1) % 4;
+							fractalShader.setUniform( "ColorScheme", colorScheme );
+						}
 				// toggle controls
 						else
 							if( event.key.code == sf::Keyboard::H )
 								showControls = showControls ? false : true;
+				// change example
+							else
+								if( event.key.code >= sf::Keyboard::Num0 && event.key.code <= sf::Keyboard::Num9 ) {
+									fractalShader.setUniform( "RedDotPos", cPoints[event.key.code - sf::Keyboard::Num0] );
+									fractalShader.setUniform( "IsExample", true );
+								}
+				// toggle UBER
+								else
+									if( event.key.code == sf::Keyboard::U ) {
+										uberMode = uberMode ? false : true;
+										fractalShader.setUniform( "UBER", uberMode );
+									}
 				break;
 		}
 	// step out if out of focus
 	if( !hasFocus )
 		return;
+
+	// set the uniforms: update mouse position only if LMB is pressed
+	if( sf::Mouse::isButtonPressed( sf::Mouse::Left ) && gfx.IsInWindow( sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) ) ) {
+		fractalShader.setUniform( "IsLMBPressed", true );
+		fractalShader.setUniform( "RedDotPos", sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) );
+		fractalShader.setUniform( "IsExample", false );
+	} else
+		fractalShader.setUniform( "IsLMBPressed", false );
 }
 // draws the objects on the screen
 void Game::ComposeFrame() {
-	// set the uniforms: update mouse position only if LMB is pressed
-	if( sf::Mouse::isButtonPressed( sf::Mouse::Left ) && gfx.IsInWindow( sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) ) )
-		fractalShader.setUniform( "MousePos", sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) );
-	fractalShader.setUniform( "IsLMBPressed", sf::Mouse::isButtonPressed( sf::Mouse::Left ) );
-	fractalShader.setUniform( "colorScheme", colorScheme );
 	// draw the canvas and apply the shader
 	gfx.Draw( canvas.GetSprite(), &fractalShader );
 	// show FPS
