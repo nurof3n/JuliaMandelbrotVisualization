@@ -13,7 +13,7 @@ Game& Game::GetInstance() noexcept {
 	static Game _instance;
 	return _instance;
 }
-// intro in console
+// setup graphics and load things
 void Game::Setup() {
 	// load shader
 	if( !fractalShader.loadFromFile( "Shaders/fractal.frag", sf::Shader::Fragment ) )

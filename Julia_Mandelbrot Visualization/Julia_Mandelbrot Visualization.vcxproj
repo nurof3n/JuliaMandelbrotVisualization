@@ -154,7 +154,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Button.cpp" />
     <ClCompile Include="CustomExcept.cpp" />
     <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
@@ -163,7 +162,6 @@
     <ClCompile Include="SpriteObj.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Button.h" />
     <ClInclude Include="CustomExcept.h" />
     <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />

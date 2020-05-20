@@ -3,8 +3,10 @@
 #include <string>
 #include <sstream>
 
+// macro to insert the filename and the code line where the exception originated from
 #define EXCEPT(s) (CustomExcept(__FILE__, __LINE__, s))
 
+// custom exception class derived from the standard exception class
 class CustomExcept : public std::exception {
 public:
 	CustomExcept() = delete;

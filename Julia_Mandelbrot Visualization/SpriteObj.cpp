@@ -18,27 +18,25 @@ SpriteObj& SpriteObj::operator=( const SpriteObj& other ) {
 	}
 	return *this;
 }
-
+// draw sprite to gfx window
 void SpriteObj::Draw( Graphics& gfx ) {
 	gfx.Draw( GetSprite() );
 }
-
+// creates a blank texture of dimension size
 void SpriteObj::CreateTexture( const sf::Vector2i& size ) {
 	_texture.create( size.x, size.y );
+	// update the sprite texture
 	_sprite.setTexture( _texture );
 }
 // creates a texture that spans the whole window
 void SpriteObj::CreateCanvas() {
 	_texture.create( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height );
+	// update the sprite texture
 	_sprite.setTexture( _texture );
 }
 
 sf::Vector2f SpriteObj::GetPos() const noexcept {
 	return _pos;
-}
-
-void SpriteObj::SetPos( const sf::Vector2f& pos ) {
-	_pos = pos;
 }
 
 sf::Texture SpriteObj::GetTexture() const noexcept {
@@ -47,6 +45,8 @@ sf::Texture SpriteObj::GetTexture() const noexcept {
 
 void SpriteObj::SetTexture( const sf::Texture& texture ) {
 	_texture = texture;
+	// update the sprite texture
+	_sprite.setTexture( texture );
 }
 
 sf::Sprite SpriteObj::GetSprite() const noexcept {
@@ -55,5 +55,6 @@ sf::Sprite SpriteObj::GetSprite() const noexcept {
 
 void SpriteObj::MoveTo( const sf::Vector2f& pos ) noexcept {
 	_sprite.move( pos - _pos );
+	// set the position too
 	_pos = pos;
 }

@@ -9,7 +9,7 @@ CustomExcept::CustomExcept( const std::string& file, int line, const std::string
 const char* CustomExcept::GetType() const noexcept {
 	return "Custom Exception";
 }
-
+// override function with custom message
 const char* CustomExcept::what() const noexcept {
 	std::ostringstream output;
 	output << "[File]: " << _file << "\n[Line]: " << _line << "\n[Exception]: " << buffer;

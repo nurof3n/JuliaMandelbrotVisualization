@@ -3,10 +3,12 @@
 #include <Windows.h>
 #include "CustomExcept.h"
 
+// encapsulates a sf::RenderWindow object
 class Graphics {
 private:
 	Graphics() = default;
 public:
+	// singleton
 	static Graphics& GetInstance() noexcept;
 
 	~Graphics() noexcept = default;

@@ -2,6 +2,7 @@
 #include <SFML/Graphics.hpp>
 #include "Graphics.h"
 
+// class that encapsulates sf::Texture and sf::Sprite for ease of use
 class SpriteObj {
 public:
 	SpriteObj() = default;
@@ -12,11 +13,9 @@ public:
 	void CreateTexture( const sf::Vector2i& size );
 	void CreateCanvas();
 	sf::Vector2f GetPos() const noexcept;
-	void SetPos( const sf::Vector2f& pos );
 	sf::Texture GetTexture() const noexcept;
 	void SetTexture( const sf::Texture& texture );
 	sf::Sprite GetSprite() const noexcept;
-	// i wont make a SetSprite function because it is misleading: you would actually need to set the texture first, then put that on the sprite
 	void MoveTo( const sf::Vector2f& pos ) noexcept;
 protected:
 	sf::Vector2f _pos;
