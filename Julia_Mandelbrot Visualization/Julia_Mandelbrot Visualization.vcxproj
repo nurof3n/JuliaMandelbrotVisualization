@@ -166,7 +166,15 @@
     <ClInclude Include="CustomExcept.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
+    <ClInclude Include="resource.h" />
     <ClInclude Include="SpriteObj.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Julia_Mandelbrot Visualization.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Content\Icon.ico" />
+    <Image Include="Content\Icon.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
