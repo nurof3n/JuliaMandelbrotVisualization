@@ -156,6 +156,7 @@
   <ItemGroup>
     <ClCompile Include="Button.cpp" />
     <ClCompile Include="CustomExcept.cpp" />
+    <ClCompile Include="FrameTimer.cpp" />
     <ClCompile Include="Game.cpp" />
     <ClCompile Include="Graphics.cpp" />
     <ClCompile Include="main.cpp" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="Button.h" />
     <ClInclude Include="CustomExcept.h" />
+    <ClInclude Include="FrameTimer.h" />
     <ClInclude Include="Game.h" />
     <ClInclude Include="Graphics.h" />
     <ClInclude Include="resource.h" />
@@ -174,7 +176,6 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Content\Icon.ico" />
-    <Image Include="Content\Icon.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

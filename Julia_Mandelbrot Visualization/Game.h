@@ -1,6 +1,7 @@
 #pragma once
 #include "Button.h"
 #include "Graphics.h"
+#include "FrameTimer.h"
 
 class Game {
 private:
@@ -20,5 +21,10 @@ private:
 	SpriteObj canvas;
 	sf::Shader fractalShader;
 	bool hasFocus;
+	bool showFPS;
+	FrameTimer frameTimer;
+	float updateTime;
+	sf::Font textFont;
+	sf::Text text;
 };
 

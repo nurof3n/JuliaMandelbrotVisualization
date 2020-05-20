@@ -17,9 +17,13 @@ void Game::Setup() {
 	if( !fractalShader.loadFromFile( "Shaders/fractal.frag", sf::Shader::Fragment ) )
 		throw EXCEPT( "Cannot load file: Shaders/fractal.frag" );
 	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
+	if( !textFont.loadFromFile( "Content/cour.ttf" ) )
+		throw EXCEPT( "Cannot load file: Content/cour.ttf" );
+	text.setFont( textFont );
 	canvas.CreateCanvas();
 	gfx.Setup();
 	hasFocus = true;
+	showFPS = false;
 }
 // updates game logic
 void Game::UpdateModel() {
@@ -43,6 +47,14 @@ void Game::UpdateModel() {
 					window.close();
 					return;
 				}
+				// toggle FPS
+				else
+					if( event.key.code == sf::Keyboard::F ) {
+						showFPS = showFPS ? false : true;
+						updateTime = 0.25; // for resetting fps
+					}
+						
+				break;
 		}
 
 	if( !hasFocus )
@@ -54,6 +66,8 @@ void Game::ComposeFrame() {
 		fractalShader.setUniform( "MousePos", sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) );
 	fractalShader.setUniform( "IsLMBPressed", sf::Mouse::isButtonPressed( sf::Mouse::Left ) );
 	gfx.Draw( canvas.GetSprite(), &fractalShader );
+	if( showFPS )
+		gfx.Draw( text );
 }
 // main game loop
 void Game::Go() {
@@ -66,4 +80,14 @@ void Game::Go() {
 		ComposeFrame();
 		gfx.EndFrame();
 	}
+
+	// show FPS
+	auto frameTime = frameTimer.Mark();
+	if( showFPS ) {
+		updateTime += frameTime;
+		if( updateTime > 0.25 ) {
+			updateTime -= 0.25;
+			text.setString( "FPS: " + std::to_string( int( 1.0 / frameTime ) ) );
+		}
+	} 
 }
