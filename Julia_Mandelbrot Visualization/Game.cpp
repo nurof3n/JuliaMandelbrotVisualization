@@ -19,36 +19,52 @@ void Game::Setup() {
 		throw EXCEPT( "Cannot load file: Shaders/fractal.frag" );
 	canvas.CreateCanvas();
 	gfx.Setup();
+	hasFocus = true;
 }
 // updates game logic
 void Game::UpdateModel() {
 	static auto& window = gfx.GetWindow();
+
 	sf::Event event;
 	while( window.pollEvent( event ) )
 		switch( event.type ) {
 			case sf::Event::Closed:
 				window.close();
 				return;
+			case sf::Event::GainedFocus:
+				hasFocus = true;
+				break;
+			case sf::Event::LostFocus:
+				hasFocus = false;
+				break;
 			case sf::Event::KeyPressed:
 				// exit
-				if( event.key.code == sf::Keyboard::Escape ) {
+				if( hasFocus && event.key.code == sf::Keyboard::Escape ) {
 					window.close();
 					return;
 				}
 		}
 
-	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
-	fractalShader.setUniform( "MousePos", sf::Vector2f( sf::Mouse::getPosition( window ) ) );
-	fractalShader.setUniform( "IsLMBPressed", sf::Mouse::isButtonPressed( sf::Mouse::Left ) );
+	if( !hasFocus )
+		return;
 }
 // draws the objects on the screen
 void Game::ComposeFrame() {
+	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
+	if( sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
+		fractalShader.setUniform( "MousePos", sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) );
+	fractalShader.setUniform( "IsLMBPressed", sf::Mouse::isButtonPressed( sf::Mouse::Left ) );
 	gfx.Draw( canvas.GetSprite(), &fractalShader );
 }
 // main game loop
 void Game::Go() {
-	gfx.BeginFrame();
+	if( hasFocus )
+		gfx.BeginFrame();
+
 	UpdateModel();
-	ComposeFrame();
-	gfx.EndFrame();
+
+	if( hasFocus ) {
+		ComposeFrame();
+		gfx.EndFrame();
+	}
 }

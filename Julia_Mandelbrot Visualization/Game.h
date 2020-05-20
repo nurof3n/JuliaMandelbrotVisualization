@@ -19,5 +19,6 @@ public:
 private:
 	SpriteObj canvas;
 	sf::Shader fractalShader;
+	bool hasFocus;
 };
 

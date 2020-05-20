@@ -41,7 +41,7 @@ void main()
     // Julia Set iteration
     for(int i = 0; i < 500; i ++ )
     {
-        if (rz > 128.0)
+        if (rz > 1024.0)
         break;
         
         // Z' -> 2*Z*Z' + 1
@@ -98,7 +98,7 @@ void main()
         z = vec2(0.0);
         rz = 0.0;
         c = uv;
-        for(int i = 0; i < 300; i ++ )
+        for(int i = 0; i < 100; i ++ )
         {
             if (rz > 128.0)
             break;
