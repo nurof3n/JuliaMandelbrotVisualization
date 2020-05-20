@@ -16,6 +16,7 @@ Game& Game::GetInstance() noexcept {
 void Game::Setup() {
 	if( !fractalShader.loadFromFile( "Shaders/fractal.frag", sf::Shader::Fragment ) )
 		throw EXCEPT( "Cannot load file: Shaders/fractal.frag" );
+	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
 	canvas.CreateCanvas();
 	gfx.Setup();
 	hasFocus = true;
@@ -49,8 +50,7 @@ void Game::UpdateModel() {
 }
 // draws the objects on the screen
 void Game::ComposeFrame() {
-	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
-	if( sf::Mouse::isButtonPressed( sf::Mouse::Left ) )
+	if( sf::Mouse::isButtonPressed( sf::Mouse::Left ) && gfx.IsInWindow( sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) ) )
 		fractalShader.setUniform( "MousePos", sf::Vector2f( sf::Mouse::getPosition( gfx.GetWindow() ) ) );
 	fractalShader.setUniform( "IsLMBPressed", sf::Mouse::isButtonPressed( sf::Mouse::Left ) );
 	gfx.Draw( canvas.GetSprite(), &fractalShader );
