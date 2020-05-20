@@ -14,7 +14,6 @@ Game& Game::GetInstance() noexcept {
 }
 // intro in console
 void Game::Setup() {
-	ShowWindow( GetConsoleWindow(), SW_HIDE );
 	if( !fractalShader.loadFromFile( "Shaders/fractal.frag", sf::Shader::Fragment ) )
 		throw EXCEPT( "Cannot load file: Shaders/fractal.frag" );
 	canvas.CreateCanvas();
