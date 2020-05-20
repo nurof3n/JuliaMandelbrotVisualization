@@ -26,5 +26,6 @@ private:
 	float updateTime;
 	sf::Font textFont;
 	sf::Text text;
+	int colorScheme;	// varies from 0 to 3
 };
 
