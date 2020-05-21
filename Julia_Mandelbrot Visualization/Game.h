@@ -5,12 +5,15 @@
 
 class Game {
 private:
+	// constructor is private to prevent instantiation from outside
 	Game() = default;
 public:
 	// singleton
 	static Game& GetInstance() noexcept;
 	Game( const Game& ) = delete;
-	const Game& operator=( const Game& ) = delete;
+	Game& operator=( const Game& ) = delete;
+	Game( Game&& ) = delete;
+	Game& operator=( Game&& ) = delete;
 
 	void Setup();
 	void ComposeFrame();
@@ -21,12 +24,12 @@ public:
 private:
 	SpriteObj canvas;
 	sf::Shader fractalShader;
-	bool hasFocus;
+	bool hasFocus;		// focus of the window
 	bool showFPS;
 	bool showControls;
-	bool uberMode;	// 4 times more iterations for more depth
+	bool uberMode;		// 4 times more iterations for more depth
 	FrameTimer frameTimer;
-	float updateTime;
+	float updateTime;	// update rate for fps
 	sf::Font textFont;
 	sf::Text textFPS, textTAB;
 	int colorScheme;	// varies from 0 to 3

@@ -6,17 +6,17 @@
 class SpriteObj {
 public:
 	SpriteObj() = default;
-	SpriteObj( const SpriteObj& ) = default;
 	SpriteObj( const std::string& filename, const sf::Vector2f& pos = sf::Vector2f( 0.0f, 0.0f ), const sf::Vector2f& scale = sf::Vector2f( 1.0f, 1.0f ) );
 	SpriteObj& operator=( const SpriteObj& other );
-	void Draw( Graphics& gfx );
+
+	void Draw( Graphics& gfx ) const;
 	void CreateTexture( const sf::Vector2i& size );
 	void CreateCanvas();
 	sf::Vector2f GetPos() const noexcept;
 	sf::Texture GetTexture() const noexcept;
 	void SetTexture( const sf::Texture& texture );
 	sf::Sprite GetSprite() const noexcept;
-	void MoveTo( const sf::Vector2f& pos ) noexcept;
+	void MoveTo( const sf::Vector2f& pos );
 protected:
 	sf::Vector2f _pos;
 	sf::Texture _texture;

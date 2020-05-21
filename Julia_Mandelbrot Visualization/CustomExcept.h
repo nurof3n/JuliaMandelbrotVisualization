@@ -10,9 +10,9 @@
 class CustomExcept : public std::exception {
 public:
 	CustomExcept() = delete;
-	CustomExcept( const std::string& file, int line, const std::string& s ) noexcept;
-	virtual const char* GetType() const noexcept;
-	const char* what() const noexcept override;
+	CustomExcept( const std::string& file, int line, const std::string& s );
+	virtual const char* GetType() const;
+	const char* what() const override;
 private:
 	mutable std::string buffer;
 	std::string _file;

@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <string>
 #include <conio.h>
-#include <windows.h>
 #include <cmath>
 #include <random>
 

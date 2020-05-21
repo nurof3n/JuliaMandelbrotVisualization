@@ -11,7 +11,7 @@ sf::RenderWindow& Graphics::GetWindow() noexcept {
 }
 // creates window
 void Graphics::Setup() {
-	window.create( sf::VideoMode::getDesktopMode(), "Interactive Julia Fractal", sf::Style::None );
+	window.create( sf::VideoMode::getDesktopMode(), "Julia Explorer", sf::Style::None );
 	sf::Image icon;
 	if( !icon.loadFromFile( "Content/Icon.png" ) )
 		throw EXCEPT( "Cannot load file: Content/Icon.png" );
@@ -30,6 +30,6 @@ void Graphics::Draw( const sf::Drawable& drawable, const sf::RenderStates& state
 	window.draw( drawable, states );
 }
 
-bool Graphics::IsInWindow( const sf::Vector2f& pos ) {
+bool Graphics::IsInWindow( const sf::Vector2f& pos ) const {
 	return (pos.x >= 0 && pos.x <= window.getSize().x - 1 && pos.y >= 0 && pos.y <= window.getSize().y - 1);
 }

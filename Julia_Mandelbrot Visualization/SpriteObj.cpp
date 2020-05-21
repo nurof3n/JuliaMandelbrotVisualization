@@ -19,7 +19,7 @@ SpriteObj& SpriteObj::operator=( const SpriteObj& other ) {
 	return *this;
 }
 // draw sprite to gfx window
-void SpriteObj::Draw( Graphics& gfx ) {
+void SpriteObj::Draw( Graphics& gfx ) const {
 	gfx.Draw( GetSprite() );
 }
 // creates a blank texture of dimension size
@@ -53,7 +53,7 @@ sf::Sprite SpriteObj::GetSprite() const noexcept {
 	return _sprite;
 }
 
-void SpriteObj::MoveTo( const sf::Vector2f& pos ) noexcept {
+void SpriteObj::MoveTo( const sf::Vector2f& pos ) {
 	_sprite.move( pos - _pos );
 	// set the position too
 	_pos = pos;
