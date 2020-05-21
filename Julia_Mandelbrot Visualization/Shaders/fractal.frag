@@ -45,30 +45,25 @@ void main()
     vec2 dz = vec2(0.0);
     float rz = 0.0;
     float rdz = 0.0;
-    int nri = 0;
-    int juliaIter = 500;
-
-    if(UBER)
-        juliaIter = 2000;
-
+    int juliaIter = 300;
+    
+    if (UBER)
+    juliaIter = 2000;
+    
     // Julia Set iteration
-    for(int i = 0; i < juliaIter; i ++ )
+    int i;
+    for(i = 0; i < juliaIter; i ++ )
     {
         if (rz > 1024.0)
         break;
         
+        if (ColorScheme == 3)
         // Z' -> 2*Z*Z' + 1
         dz = 2.0 * vec2(z.x * dz.x - z.y * dz.y, z.x * dz.y + z.y * dz.x) + vec2(1.0, 0.0);
         // Z -> Z^2 + c
         z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
-        nri = i;
         rz = dot(z, z);
     }
-    
-    // (DISTANCE ESTIMATOR) https://iquilezles.org/www/articles/distancefractals/distancefractals.htm
-    rdz = dot(dz, dz);
-    float distJulia = 0.5 * sqrt(rz / rdz) * log(rz);
-    distJulia = clamp(pow(6.0 * distJulia / zoom, 0.2), 0.0, 1.0);
     
     // (COLORING ALGORITHMS) https://www.mi.sanu.ac.rs/vismath/javier/b3.htm
     vec3 color;
@@ -76,17 +71,22 @@ void main()
     color = vec3(0.0);
     else {
         // normalized iteration count: https://iquilezles.org/www/articles/mset_smooth/mset_smooth.htm
-        float nic = float(nri) + 1.0 - log2(log2(rz));
+        float nic = float(i) + 1.0 - log2(log2(rz));
         
         if (ColorScheme == 1)
         // multicolored
         color = hsv2rgb(nic * 0.015) + vec3(0.0, 0.0, 0.4);
         else if (ColorScheme == 2)
         // (discrete) escape time coloring: Base the color on the number of iterations
-        color = mix(colorMix1, colorMix2, fract(float(nri) * 0.02));
-        else if (ColorScheme == 3)
-        // greyscale
-        color = vec3(distJulia);
+        color = mix(colorMix1, colorMix2, fract(float(i) * 0.02));
+        else if (ColorScheme == 3) {
+            // (DISTANCE ESTIMATOR) https://iquilezles.org/www/articles/distancefractals/distancefractals.htm
+            rdz = dot(dz, dz);
+            float distJulia = 0.5 * sqrt(rz / rdz) * log(rz);
+            distJulia = clamp(pow(6.0 * distJulia / zoom, 0.2), 0.0, 1.0);
+            // greyscale, distance estimation
+            color = vec3(distJulia);
+        }
         else
         // default color scheme, like on wikipedia
         color = 0.5 + 0.5 * cos(3.0 + nic * 0.2 + vec3(0.0, 0.6, 1.0));
@@ -99,7 +99,7 @@ void main()
         z = vec2(0.0);
         rz = 0.0;
         c = juliaParam;
-        for(int i = 0; i < 100; i ++ )
+        for(int i = 0; i < 50; i ++ )
         {
             if (rz > 4.0)
             break;
@@ -122,13 +122,11 @@ void main()
         z = vec2(0.0);
         rz = 0.0;
         c = uv;
-        for(int i = 0; i < 100; i ++ )
+        for(i = 0; i < 50; i ++ )
         {
-            if (rz > 64.0)
+            if (rz > 16.0)
             break;
             
-            // Z' -> 2*Z*Z' + 1
-            dz = 2.0 * vec2(z.x * dz.x - z.y * dz.y, z.x * dz.y + z.y * dz.x) + vec2(1.0, 0.0);
             // Z -> Z^2 + c
             z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
             rz = dot(z, z);
@@ -138,15 +136,14 @@ void main()
         if (rz < 4.0)
         color2 = incolor;
         else {
-            rdz = dot(dz, dz);
-            float distMand = 0.5 * sqrt(rz / rdz) * log(rz);
-            distMand = clamp(pow(6.0 * distMand / zoom, 0.2), 0.0, 1.0);
-            color2 = mix(incolor, color, smoothstep(0.0, 0.7, distMand));
+            float nic = float(i) + 1.0 - log2(log2(rz));
+            color2 = mix(color, vec3(1.0), smoothstep(0.0, 60.0, nic));
         }
         
         color = mix(color, color2, 0.3);
     }
     
+    // red dot
     color = mix(color, vec3(1.0, 0.0, 0.0), smoothstep(5.0 / zoom / Resolution.y, 0.0, length(uv - juliaParam)));
     
     gl_FragColor = vec4(color, 1.0);
