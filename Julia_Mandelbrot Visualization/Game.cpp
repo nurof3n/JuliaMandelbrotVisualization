@@ -15,8 +15,10 @@ Game& Game::GetInstance() noexcept {
 // setup graphics and load things
 void Game::Setup() {
 	// load shader
-	if( !fractalShader.loadFromFile( "Shaders/fractal.frag", sf::Shader::Fragment ) )
-		throw EXCEPT( "Cannot load file: Shaders/fractal.frag" );
+	if( !sf::Shader::isAvailable )
+		throw EXCEPT( "Shaders are not available on this system" );
+	if( !fractalShader.loadFromFile( "Shaders/vertex.vert", "Shaders/fractal.frag" ) )
+		throw EXCEPT( "Cannot load shaders" );
 	// set resolution uniform
 	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
 	// load text font
@@ -38,7 +40,8 @@ void Game::Setup() {
 	std::mt19937 rng( dev() );
 	std::uniform_int_distribution<std::mt19937::result_type> randHeight( 0, gfx.GetWindow().getSize().y - 1 );
 	std::uniform_int_distribution<std::mt19937::result_type> randWidth( 0, gfx.GetWindow().getSize().x - 1 );
-	fractalShader.setUniform( "RedDotPos", sf::Vector2f( randWidth( rng ), randHeight( rng ) ) );
+	sf::Vector2f randomPoint = sf::Vector2f( randWidth( rng ), randHeight( rng ) );
+	fractalShader.setUniform( "RedDotPos", randomPoint );
 	fractalShader.setUniform( "IsExample", false );
 	fractalShader.setUniform( "ColorScheme", 0 );
 	// initialize member variables

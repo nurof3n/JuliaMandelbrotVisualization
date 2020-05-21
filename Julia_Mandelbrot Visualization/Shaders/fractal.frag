@@ -7,6 +7,9 @@ uniform bool IsExample;
 uniform bool UBER;
 uniform int ColorScheme;
 
+varying float rzMand;
+varying vec2 juliaParam;
+
 // colors used to blend on one color scheme
 const vec3 colorMix1 = vec3(0.2824, 0.2824, 0.9686);
 const vec3 colorMix2 = vec3(0.0, 0.0, 0.0);
@@ -22,24 +25,12 @@ void main()
 {
     // normalize coordinates, such that y axis goes from -1 to 1, (0, 0) is the center of the screen, keep aspect ratio
     vec2 uv = (gl_FragCoord.xy - Resolution * 0.5) / Resolution.y;
-    vec2 redDot;
     
     // set and apply zoom
     float zoom = 0.4;
     uv /= zoom;
     
-    // update redDot as mouse position or as example position
-    if (!IsExample) {
-        redDot = (RedDotPos - Resolution * 0.5) / Resolution.y;
-        // invert the mouse y coordinates
-        redDot.y = -redDot.y;
-        redDot /= zoom;
-    }
-    else
-    redDot = RedDotPos;
-    
     // Julia Set
-    vec2 juliaParam = redDot;
     vec2 z = uv;
     vec2 c = juliaParam;
     vec2 dz = vec2(0.0);
@@ -94,24 +85,9 @@ void main()
     
     // Mandelbrot Set (shown when left mouse button is pressed)
     if (IsLMBPressed) {
-        // check if juliaParam is in mandelbrot set (check its orbit)
-        // this is an invariant of the frame, so maybe move this out??
-        z = vec2(0.0);
-        rz = 0.0;
-        c = juliaParam;
-        for(int i = 0; i < 50; i ++ )
-        {
-            if (rz > 4.0)
-            break;
-            
-            // Z -> Z^2 + c
-            z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
-            rz = dot(z, z);
-        }
-        
         // set the color of the Mandelbrot Set, according to the inclusion of the juliaParam in it
         vec3 incolor;
-        if (rz < 4.0)
+        if (rzMand < 4.0)
         incolor = vec3(0.3, 1.0, 0.3); // is in
         else if (ColorScheme == 1)// adjust red color for the multicolored one
         incolor = vec3(0.4, 0.0667, 0.0039); // is out
