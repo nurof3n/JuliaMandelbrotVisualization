@@ -113,7 +113,7 @@ void main()
         color2 = incolor;
         else {
             float nic = float(i) + 1.0 - log2(log2(rz));
-            color2 = mix(color, vec3(1.0), smoothstep(0.0, 60.0, nic));
+            color2 = mix(color, vec3(0.6314, 0.8549, 0.0275), smoothstep(0.0, 50.0, nic));
         }
         
         color = mix(color, color2, 0.3);

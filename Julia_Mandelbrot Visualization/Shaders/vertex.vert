@@ -4,6 +4,7 @@ varying vec2 juliaParam;
 uniform vec2 Resolution;
 uniform vec2 RedDotPos;
 uniform bool IsExample;
+uniform bool IsLMBPressed;
 
 void main() {
     // transform the vertex position
@@ -25,17 +26,19 @@ void main() {
     juliaParam = RedDotPos;
     
     // check if juliaParam is in mandelbrot set (check its orbit)
-    // this is an invariant of the frame, so maybe move this out??
-    vec2 z = vec2(0.0);
-    rzMand = 0.0;
-    vec2 c = juliaParam;
-    for(int i = 0; i < 50; i ++ )
-    {
-        if (rzMand > 4.0)
-        break;
-        
-        // Z -> Z^2 + c
-        z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
-        rzMand = dot(z, z);
+    // only when LMB is pressed
+    if (IsLMBPressed) {
+        vec2 z = vec2(0.0);
+        rzMand = 0.0;
+        vec2 c = juliaParam;
+        for(int i = 0; i < 50; i ++ )
+        {
+            if (rzMand > 4.0)
+            break;
+            
+            // Z -> Z^2 + c
+            z = vec2(z.x * z.x - z.y * z.y, 2.0 * z.x * z.y) + c;
+            rzMand = dot(z, z);
+        }
     }
 }

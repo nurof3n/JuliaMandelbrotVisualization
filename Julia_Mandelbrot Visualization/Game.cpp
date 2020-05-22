@@ -16,7 +16,7 @@ void Game::Setup() {
 	// load shader
 	if( !sf::Shader::isAvailable )
 		throw EXCEPT( "Shaders are not available on this system" );
-	if( !fractalShader.loadFromFile( "Shaders/vertex.vert", "Shaders/fractal.frag" ) )
+	if( !fractalShader.loadFromFile( "Shaders/vertex.vert", "Shaders/fragment.frag" ) )
 		throw EXCEPT( "Cannot load shaders" );
 	// set resolution uniform
 	fractalShader.setUniform( "Resolution", sf::Vector2f( sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height ) );
