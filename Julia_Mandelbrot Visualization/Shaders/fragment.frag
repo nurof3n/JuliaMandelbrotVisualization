@@ -66,7 +66,7 @@ void main()
         
         if (ColorScheme == 1)
         // multicolored
-        color = (hsv2rgb(nic * 0.015));
+        color = hsv2rgb(nic * 0.015);
         else if (ColorScheme == 2)
         // (discrete) escape time coloring: Base the color on the number of iterations
         color = mix(colorMix1, colorMix2, fract(float(i) * 0.02));
@@ -113,7 +113,7 @@ void main()
         color2 = incolor;
         else {
             float nic = float(i) + 1.0 - log2(log2(rz));
-            color2 = mix(color, vec3(0.6314, 0.8549, 0.0275), smoothstep(0.0, 50.0, nic));
+            color2 = mix(color, incolor, smoothstep(0.0, 50.0, nic));
         }
         
         color = mix(color, color2, 0.3);

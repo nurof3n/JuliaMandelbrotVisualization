@@ -29,7 +29,8 @@ private:
 	bool showControls;
 	bool uberMode;		// 4 times more iterations for more depth
 	FrameTimer frameTimer;
-	float updateTime;	// update rate for fps
+	float updateTimens;
+	int FPS;
 	sf::Font textFont;
 	sf::Text textFPS, textTAB;
 	int colorScheme;	// varies from 0 to 3

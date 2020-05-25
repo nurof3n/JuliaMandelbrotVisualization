@@ -5,6 +5,8 @@
 #include <cmath>
 #include <random>
 
+using namespace std::chrono;
+
 Graphics& Game::gfx = Graphics::GetInstance();
 
 Game& Game::GetInstance() noexcept {
@@ -49,6 +51,7 @@ void Game::Setup() {
 	showControls = true;
 	uberMode = false;
 	colorScheme = 0;	// default color scheme
+	FPS = 0;
 }
 // updates game logic
 void Game::UpdateModel() {
@@ -74,10 +77,8 @@ void Game::UpdateModel() {
 				}
 				// toggle FPS
 				else
-					if( event.key.code == sf::Keyboard::F ) {
+					if( event.key.code == sf::Keyboard::F )
 						showFPS = showFPS ? false : true;
-						updateTime = 0.25; // for resetting fps
-					}
 				// switch color scheme
 					else
 						if( event.key.code == sf::Keyboard::Tab ) {
@@ -139,12 +140,13 @@ void Game::Go() {
 	}
 
 	// show FPS
-	auto frameTime = frameTimer.Mark();
-	if( showFPS ) {
-		updateTime += frameTime;
-		if( updateTime > 0.25 ) {
-			updateTime -= 0.25;
-			textFPS.setString( "FPS: " + std::to_string( int( 1.0 / frameTime ) ) );
-		}
+	long long frameTime = frameTimer.Mark();
+	updateTimens += frameTime / 1000000.0f;
+	++FPS;
+	if( updateTimens >= 1000.0f ) {
+		updateTimens -= 1000.0f;
+		if( showFPS )
+			textFPS.setString( "FPS: " + std::to_string( FPS ) );
+		FPS = 0;
 	}
 }
