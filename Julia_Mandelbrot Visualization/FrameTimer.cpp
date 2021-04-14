@@ -6,7 +6,7 @@ FrameTimer::FrameTimer() {
 	last = steady_clock::now();
 }
 // mark the time (nanoseconds) in last and return the time passed since the last mark
-long long FrameTimer::Mark() {
+long long FrameTimer::mark() {
 	const auto old = last;
 	last = steady_clock::now();
 	return (last - old).count();

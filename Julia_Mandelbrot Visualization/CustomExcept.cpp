@@ -6,7 +6,7 @@ CustomExcept::CustomExcept( const std::string& file, int line, const std::string
 	_line( line ),
 	_file( file ) {}
 
-const char* CustomExcept::GetType() const {
+const char* CustomExcept::getType() const {
 	return "Custom Exception";
 }
 // override function with custom message

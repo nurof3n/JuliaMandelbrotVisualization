@@ -11,7 +11,7 @@ class CustomExcept : public std::exception {
 public:
 	CustomExcept() = delete;
 	CustomExcept( const std::string& file, int line, const std::string& s );
-	virtual const char* GetType() const;
+	virtual const char* getType() const;
 	const char* what() const override;
 private:
 	mutable std::string buffer;

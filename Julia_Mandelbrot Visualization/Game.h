@@ -1,24 +1,25 @@
 #pragma once
-#include "Button.h"
+#include "SpriteObj.h"
 #include "Graphics.h"
 #include "FrameTimer.h"
 
-class Game {
+class Game
+{
 private:
 	// constructor is private to prevent instantiation from outside
 	Game() = default;
 public:
 	// singleton
-	static Game& GetInstance() noexcept;
-	Game( const Game& ) = delete;
-	Game& operator=( const Game& ) = delete;
-	Game( Game&& ) = delete;
-	Game& operator=( Game&& ) = delete;
+	static Game& getInstance() noexcept;
+	Game(const Game&) = delete;
+	Game& operator=(const Game&) = delete;
+	Game(Game&&) = delete;
+	Game& operator=(Game&&) = delete;
 
-	void Setup();
-	void ComposeFrame();
-	void UpdateModel();
-	void Go();
+	void setup();
+	void composeFrame();
+	void updateModel();
+	void go();
 public:
 	static Graphics& gfx;
 private:
