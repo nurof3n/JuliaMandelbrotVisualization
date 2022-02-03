@@ -1,28 +1,71 @@
 #pragma once
-#include <SFML/Graphics.hpp>
-#include <Windows.h>
+
 #include "CustomExcept.h"
 
-// encapsulates a sf::RenderWindow object
+#include <SFML/Graphics.hpp>
+
+#include <Windows.h>
+
+/**
+ * @brief  Encapsulates a render window and defines drawing operations on it. This class uses
+ * Singleton Pattern because we only need one render window
+ */
 class Graphics {
 private:
-	// constructor is private to prevent instantiation from outside
-	Graphics() = default;
+    // constructor is private to prevent instantiation from outside
+    Graphics() = default;
+
 public:
-	// singleton
-	static Graphics& getInstance() noexcept;
-	Graphics( const Graphics& ) = delete;
-	Graphics& operator=( const Graphics& ) = delete;
-	Graphics( Graphics&& ) = delete;
-	Graphics& operator=( Graphics&& ) = delete;
+    /**
+     * @brief Gets the instance of this class
+     */
+    static Graphics& getInstance() noexcept
+    {
+        static Graphics _instance;
+        return _instance;
+    }
 
-	sf::RenderWindow& getWindow() noexcept;
-	void setup();
-	void beginFrame();
-	void endFrame();
-	void draw( const sf::Drawable& drawable, const sf::RenderStates& states = sf::RenderStates::Default );
-	bool isInWindow( const sf::Vector2f& pos ) const;
+    /*delete unwanted constructors and assignment operators*/
+    Graphics(const Graphics&) = delete;
+    Graphics& operator=(const Graphics&) = delete;
+    Graphics(Graphics&&)                 = delete;
+    Graphics& operator=(Graphics&&) = delete;
+
+    /*getters and setters*/
+    sf::RenderWindow& getWindow() noexcept;
+
+    /**
+     * @brief Initializes the window for display (title, icon etc.)
+     */
+    void setup();
+
+    /**
+     * @brief Clears the window's render buffer
+     */
+    void beginFrame();
+
+    /**
+     * @brief Displays the window's render buffer
+     */
+    void endFrame();
+
+    /**
+     * @brief Draws the given object to the window's render buffer, applying the render states
+     *
+     * @param drawable object to draw
+     * @param states render states to apply
+     */
+    void draw(const sf::Drawable&     drawable,
+              const sf::RenderStates& states = sf::RenderStates::Default);
+
+    /**
+     * @brief Checks if the given coordinates are inside the window's render canvas
+     *
+     * @param pos coordinates
+     * @return true if inside, false otherwise
+     */
+    bool isInWindow(const sf::Vector2f& pos) const;
+
 private:
-	sf::RenderWindow window;
+    sf::RenderWindow window;  // window to draw on
 };
-

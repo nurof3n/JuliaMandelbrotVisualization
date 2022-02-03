@@ -1,153 +1,203 @@
 #include "Game.h"
-#include <algorithm>
-#include <string>
+
 #include <conio.h>
+
+#include <algorithm>
 #include <cmath>
 #include <random>
+#include <string>
 
 using namespace std::chrono;
 
-Graphics& Game::gfx = Graphics::getInstance();
+Graphics& Game::gfx = Graphics::getInstance();  // get the graphics object reference
 
-Game& Game::getInstance() noexcept {
-	static Game _instance;
-	return _instance;
-}
-// setup graphics and load things
-void Game::setup() {
-	// load shader
-	if (!sf::Shader::isAvailable)
-		throw EXCEPT("Shaders are not available on this system");
-	if (!fractalShader.loadFromFile("Shaders/vertex.vert", "Shaders/fragment.frag"))
-		throw EXCEPT("Cannot load shaders");
-	// set resolution uniform
-	fractalShader.setUniform("Resolution", sf::Vector2f(sf::VideoMode::getDesktopMode().width, sf::VideoMode::getDesktopMode().height));
-	// load text font
-	if (!textFont.loadFromFile("Content/cour.ttf"))
-		throw EXCEPT("Cannot load file: Content/cour.ttf");
-	textFPS.setFont(textFont);
-	textTAB.setFont(textFont);
-	textFPS.setFillColor({ 222, 168, 47 });
-	textTAB.setFillColor({ 222, 168, 47 });
-	textTAB.setPosition({ 0.0f, 24.0f });
-	textFPS.setCharacterSize(20);
-	textTAB.setCharacterSize(20);
-	textTAB.setString("Press F to toggle FPS\nPress TAB to cycle through color schemes\nPress 0-9 number keys to go through example sets\nPress U to toggle UBER mode\nPress ESCAPE to exit\nPress H to hide controls");
-	// setup window
-	canvas.createCanvas();
-	gfx.setup();
-	// set random red dot position inside the window
-	std::random_device dev;
-	std::mt19937 rng(dev());
-	std::uniform_int_distribution<std::mt19937::result_type> randHeight(0, gfx.getWindow().getSize().y - 1);
-	std::uniform_int_distribution<std::mt19937::result_type> randWidth(0, gfx.getWindow().getSize().x - 1);
-	sf::Vector2f randomPoint = sf::Vector2f(randWidth(rng), randHeight(rng));
-	fractalShader.setUniform("RedDotPos", randomPoint);
-	fractalShader.setUniform("IsExample", false);
-	fractalShader.setUniform("ColorScheme", 0);
-	// initialize member variables
-	hasFocus = true;
-	showFPS = false;
-	showControls = true;
-	uberMode = false;
-	colorScheme = 0;	// default color scheme
-	FPS = 0;
-}
-// updates game logic
-void Game::updateModel() {
-	static auto& window = gfx.getWindow();
-	// event queue
-	sf::Event event;
-	while (window.pollEvent(event))
-		switch (event.type) {
-		case sf::Event::Closed:
-			window.close();
-			return;
-		case sf::Event::GainedFocus:
-			hasFocus = true;
-			break;
-		case sf::Event::LostFocus:
-			hasFocus = false;
-			break;
-		case sf::Event::KeyPressed:
-			// exit
-			if (hasFocus && event.key.code == sf::Keyboard::Escape) {
-				window.close();
-				return;
-			}
-			// toggle FPS
-			else
-				if (event.key.code == sf::Keyboard::F)
-					showFPS = showFPS ? false : true;
-			// switch color scheme
-				else
-					if (event.key.code == sf::Keyboard::Tab) {
-						colorScheme = (colorScheme + 1) % 4;
-						fractalShader.setUniform("ColorScheme", colorScheme);
-					}
-			// toggle controls
-					else
-						if (event.key.code == sf::Keyboard::H)
-							showControls = showControls ? false : true;
-			// change example
-						else
-							if (event.key.code >= sf::Keyboard::Num0 && event.key.code <= sf::Keyboard::Num9) {
-								fractalShader.setUniform("RedDotPos", cPoints[event.key.code - sf::Keyboard::Num0]);
-								fractalShader.setUniform("IsExample", true);
-							}
-			// toggle UBER
-							else
-								if (event.key.code == sf::Keyboard::U) {
-									uberMode = uberMode ? false : true;
-									fractalShader.setUniform("UBER", uberMode);
-								}
-			break;
-		}
-	// step out if out of focus
-	if (!hasFocus)
-		return;
+void Game::setup()
+{
+    // load shader
+    if (!sf::Shader::isAvailable())
+        throw EXCEPT("Shaders are not available on this system");
 
-	// set the uniforms: update mouse position only if LMB is pressed
-	if (sf::Mouse::isButtonPressed(sf::Mouse::Left) && gfx.isInWindow(sf::Vector2f(sf::Mouse::getPosition(gfx.getWindow())))) {
-		fractalShader.setUniform("IsLMBPressed", true);
-		fractalShader.setUniform("RedDotPos", sf::Vector2f(sf::Mouse::getPosition(gfx.getWindow())));
-		fractalShader.setUniform("IsExample", false);
-	}
-	else
-		fractalShader.setUniform("IsLMBPressed", false);
-}
-// draws the objects on the screen
-void Game::composeFrame() {
-	// draw the canvas and apply the shader
-	gfx.draw(canvas.getSprite(), &fractalShader);
-	// show FPS
-	if (showFPS)
-		gfx.draw(textFPS);
-	// show controls
-	if (showControls)
-		gfx.draw(textTAB);
-}
-// main game loop
-void Game::go() {
-	if (hasFocus)
-		gfx.beginFrame();
+    if (!fractalShader.loadFromFile("Shaders/vertex.vert", "Shaders/fragment.frag"))
+        throw EXCEPT("Cannot load shaders");
 
-	// go through this even if out of focus, to handle the event queue
-	updateModel();
+    // set resolution of the shader
+    fractalShader.setUniform("Resolution",
+                             sf::Vector2f((float) sf::VideoMode::getDesktopMode().width,
+                                          (float) sf::VideoMode::getDesktopMode().height));
 
-	if (hasFocus) {
-		composeFrame();
-		gfx.endFrame();
-	}
+    // load text font
+    if (!font.loadFromFile("Content/cour.ttf"))
+        throw EXCEPT("Cannot load file: Content/cour.ttf");
 
-	// show FPS
-	long long frameTime = frameTimer.mark();
-	updateTimens += frameTime / 1000000.0f;
-	++FPS;
-	if (updateTimens >= 1000.0f) {
-		updateTimens -= 1000.0f;
-		if (showFPS)
-			textFPS.setString("FPS: " + std::to_string(FPS));
-		FPS = 0;
-	}
+    // initialize the text objects
+    textFrametime.setFont(font);
+    textControls.setFont(font);
+    textFrametime.setFillColor({222, 168, 47});
+    textControls.setFillColor({222, 168, 47});
+    textControls.setPosition({0.0f, 24.0f});
+    textFrametime.setCharacterSize(20);
+    textControls.setCharacterSize(20);
+    textControls.setString(
+        "Press F to toggle frametime\nPress TAB to cycle through color schemes\nPress 0-9 number "
+        "keys to go through example sets\nPress U to toggle UBER mode\nPress ESCAPE to "
+        "exit\nPress H to hide controls");
+
+    // setup the canvas and render window
+    shaderCanvas.createCanvas();
+    gfx.setup();
+
+    // set Julia parameter's position inside the window, randomly
+    std::random_device                                       dev;
+    std::mt19937                                             rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> randHeight(
+        0, gfx.getWindow().getSize().y - 1);
+    std::uniform_int_distribution<std::mt19937::result_type> randWidth(
+        0, gfx.getWindow().getSize().x - 1);
+
+    setRedDot(sf::Vector2f((float) randWidth(rng), (float) randHeight(rng)));
+
+    // set the color scheme to default
+    setColorScheme(0);
+
+    // initialize member variables
+    focused             = true;
+    showFrametimeToggle = false;
+    showControlsToggle  = true;
+    uberModeToggle      = false;
+    colorScheme         = 0;
+    frametime           = 0;
 }
+
+void Game::updateModel()
+{
+    static auto& window = gfx.getWindow();
+
+    // Handle the event queue
+    sf::Event event;
+    while (window.pollEvent(event))
+        switch (event.type) {
+        case sf::Event::Closed: window.close(); return;
+        case sf::Event::GainedFocus: setFocused(true); break;
+        case sf::Event::LostFocus: setFocused(false); break;
+        case sf::Event::KeyPressed:
+            // exit
+            if (isFocused() && event.key.code == sf::Keyboard::Escape) {
+                window.close();
+                return;
+            }
+            // toggle FPS
+            else if (event.key.code == sf::Keyboard::F)
+                toggleFrametime();
+            // switch color scheme
+            else if (event.key.code == sf::Keyboard::Tab) {
+                setNextColorScheme();
+            }
+            // toggle controls
+            else if (event.key.code == sf::Keyboard::H)
+                toggleControls();
+            // change example image
+            else if (event.key.code >= sf::Keyboard::Num0 && event.key.code <= sf::Keyboard::Num9) {
+                setExampleImage(event.key.code - sf::Keyboard::Num0);
+            }
+            // toggle UBER
+            else if (event.key.code == sf::Keyboard::U) {
+                toggleUberMode();
+            }
+
+            break;
+        }
+
+    // step out if out of focus
+    if (!isFocused())
+        return;
+
+    // set the uniforms
+    // update mouse position only if LMB is pressed
+    if (sf::Mouse::isButtonPressed(sf::Mouse::Left)
+        && gfx.isInWindow(sf::Vector2f(sf::Mouse::getPosition(gfx.getWindow())))) {
+        fractalShader.setUniform("IsLMBPressed", true);
+        setRedDot(sf::Vector2f(sf::Mouse::getPosition(gfx.getWindow())));
+    }
+    else
+        fractalShader.setUniform("IsLMBPressed", false);
+}
+
+void Game::composeFrame()
+{
+    // draw the canvas and apply the shader
+    gfx.draw(shaderCanvas.getSprite(), &fractalShader);
+
+    // show toggled elements
+    if (showFrametimeToggle)
+        gfx.draw(textFrametime);
+    if (showControlsToggle)
+        gfx.draw(textControls);
+}
+
+void Game::go()
+{
+    // render only if in focus
+    if (isFocused())
+        gfx.beginFrame();
+
+    // update game state (even if out of focus, to handle the event queue)
+    updateModel();
+
+    // render only if in focus
+    if (isFocused()) {
+        composeFrame();
+        gfx.endFrame();
+    }
+
+    // compute frametime
+    measureFrametime();
+    textFrametime.setString("Frametime: " + std::to_string(frametime) + " ms");
+}
+
+void Game::setFrametimeToggle(bool toggle) { showFrametimeToggle = toggle; }
+
+void Game::toggleFrametime() { setFrametimeToggle(!showFrametimeToggle); }
+
+void Game::setControlsToggle(bool toggle) { showControlsToggle = toggle; }
+
+void Game::toggleControls() { setControlsToggle(!showControlsToggle); }
+
+void Game::setUberModeToggle(bool toggle)
+{
+    uberModeToggle = toggle;
+    fractalShader.setUniform("UBER", uberModeToggle);
+}
+
+void Game::toggleUberMode() { setUberModeToggle(!uberModeToggle); }
+
+bool Game::isFocused() { return focused; }
+
+void Game::setFocused(bool focus) { focused = focus; }
+
+void Game::setColorScheme(int index)
+{
+    if (index < 0 || index >= COLOR_SCHEME_COUNT)
+        throw EXCEPT("Index out of bounds");
+
+    colorScheme = index;
+    fractalShader.setUniform("ColorScheme", colorScheme);
+}
+
+void Game::setNextColorScheme() { setColorScheme((colorScheme + 1) % COLOR_SCHEME_COUNT); }
+
+void Game::setExampleImage(int index)
+{
+    if (index < 0 || index >= IMAGE_EXAMPLES_COUNT)
+        throw EXCEPT("Index out of bounds");
+
+    fractalShader.setUniform("RedDotPos", juliaParameters[index]);
+    fractalShader.setUniform("IsExample", true);
+}
+
+void Game::setRedDot(sf::Vector2f pos)
+{
+    fractalShader.setUniform("RedDotPos", pos);
+    fractalShader.setUniform("IsExample", false);
+}
+
+void Game::measureFrametime() { frametime = frameTimer.mark() / 1e6f; }
