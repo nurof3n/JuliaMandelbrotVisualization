@@ -9,8 +9,6 @@
 
 using namespace std::chrono;
 
-Graphics& Game::gfx = Graphics::getInstance();  // get the graphics object reference
-
 void Game::setup()
 {
     // load shader
@@ -65,7 +63,7 @@ void Game::setup()
     showControlsToggle  = true;
     uberModeToggle      = false;
     colorScheme         = 0;
-    frametime           = 0;
+    frametime           = 0.0f;
 }
 
 void Game::updateModel()
@@ -170,9 +168,13 @@ void Game::setUberModeToggle(bool toggle)
 
 void Game::toggleUberMode() { setUberModeToggle(!uberModeToggle); }
 
-bool Game::isFocused() { return focused; }
+bool Game::isFocused() const { return focused; }
 
 void Game::setFocused(bool focus) { focused = focus; }
+
+const Graphics& Game::getGraphics() const { return gfx; }
+
+Graphics& Game::getGraphics() { return gfx; }
 
 void Game::setColorScheme(int index)
 {

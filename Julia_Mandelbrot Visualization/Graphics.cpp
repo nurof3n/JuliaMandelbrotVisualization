@@ -2,7 +2,9 @@
 
 #include "CustomExcept.h"
 
-sf::RenderWindow& Graphics::getWindow() noexcept { return window; }
+const sf::RenderWindow& Graphics::getWindow() const { return window; }
+
+sf::RenderWindow& Graphics::getWindow() { return window; }
 
 void Graphics::setup()
 {

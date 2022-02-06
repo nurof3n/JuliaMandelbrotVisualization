@@ -28,10 +28,10 @@ public:
     void draw(Graphics& gfx) const;
 
     /*getters and setters*/
-    sf::Vector2f getPos() const noexcept;
-    sf::Texture  getTexture() const noexcept;
+    sf::Vector2f getPos() const;
+    sf::Texture  getTexture() const;
     void         setTexture(const sf::Texture& texture);
-    sf::Sprite   getSprite() const noexcept;
+    sf::Sprite   getSprite() const;
 
     /**
      * @brief Creates a blank texture of given size

@@ -1,8 +1,8 @@
 #pragma once
 
-#include "CustomExcept.h"
-
 #include <SFML/Graphics.hpp>
+
+#include "CustomExcept.h"
 
 #include <Windows.h>
 
@@ -19,7 +19,7 @@ public:
     /**
      * @brief Gets the instance of this class
      */
-    static Graphics& getInstance() noexcept
+    static Graphics& getInstance()
     {
         static Graphics _instance;
         return _instance;
@@ -32,7 +32,8 @@ public:
     Graphics& operator=(Graphics&&) = delete;
 
     /*getters and setters*/
-    sf::RenderWindow& getWindow() noexcept;
+    const sf::RenderWindow& getWindow() const;
+    sf::RenderWindow&       getWindow();
 
     /**
      * @brief Initializes the window for display (title, icon etc.)

@@ -37,9 +37,9 @@ void SpriteObj::createCanvas()
     sprite.setTexture(texture);
 }
 
-sf::Vector2f SpriteObj::getPos() const noexcept { return pos; }
+sf::Vector2f SpriteObj::getPos() const { return pos; }
 
-sf::Texture SpriteObj::getTexture() const noexcept { return texture; }
+sf::Texture SpriteObj::getTexture() const { return texture; }
 
 void SpriteObj::setTexture(const sf::Texture& texture)
 {
@@ -47,7 +47,7 @@ void SpriteObj::setTexture(const sf::Texture& texture)
     sprite.setTexture(texture);
 }
 
-sf::Sprite SpriteObj::getSprite() const noexcept { return sprite; }
+sf::Sprite SpriteObj::getSprite() const { return sprite; }
 
 void SpriteObj::moveTo(const sf::Vector2f& pos)
 {

@@ -28,7 +28,7 @@ public:
     /**
      * @brief Gets the instance of this class
      */
-    static Game& getInstance() noexcept
+    static Game& getInstance()
     {
         static Game _instance;
         return _instance;
@@ -52,14 +52,17 @@ public:
     void go();
 
     /*getters and setters*/
-    void setFrametimeToggle(bool toggle);
-    void toggleFrametime();
-    void setControlsToggle(bool toggle);
-    void toggleControls();
-    void setUberModeToggle(bool toggle);
-    void toggleUberMode();
-    bool isFocused();
-    void setFocused(bool focus);
+    void            setFrametimeToggle(bool toggle);
+    void            toggleFrametime();
+    void            setControlsToggle(bool toggle);
+    void            toggleControls();
+    void            setUberModeToggle(bool toggle);
+    void            toggleUberMode();
+    bool            isFocused() const;
+    void            setFocused(bool focus);
+    const Graphics& getGraphics() const;
+    Graphics&       getGraphics();
+
 
     /**
      * @brief Sets the color scheme according to a given index
@@ -94,13 +97,12 @@ public:
      */
     void measureFrametime();
 
-public:
-    static Graphics& gfx;  // reference to the instance of the graphics object
-
 private:
     /*constants*/
     static constexpr int COLOR_SCHEME_COUNT   = 4;
     static constexpr int IMAGE_EXAMPLES_COUNT = 10;
+
+    Graphics& gfx = Graphics::getInstance();  // reference to the instance of the graphics object
 
     /*game options toggles*/
     bool showFrametimeToggle;
